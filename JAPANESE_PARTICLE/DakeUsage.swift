@@ -27,7 +27,7 @@ struct ExampleSentence: Identifiable {
 // 實際的「だけ」用法數據
 let dakeUsageData: [DakeUsage] = [
     DakeUsage(
-        title: "「だけ則為」/「だけじゃ」",
+        title: "「だけじゃ」",
         description: "表示「如果只有～的話，是不夠的、不行的」。表達對現狀的不滿或渴望改變。",
         structure: "動詞(辭書型) + だけでは / だけじゃ (口語)",
         examples: [

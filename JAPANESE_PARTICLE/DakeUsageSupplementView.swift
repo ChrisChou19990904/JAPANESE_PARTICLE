@@ -7,23 +7,20 @@
 import SwiftUI
 
 struct DakeUsageSupplementView: View {
-    // 狀態變數：控制 Safari 視窗
-    @State private var selectedURL: URL?
-    
-    let summary: String = "總結來說：「だけ」表示限制與唯一性，「だけ則為／だけじゃ」表示「如果只有這樣是不夠的」。它們在歌詞中扮演著情感強化與語氣轉折的重要角色。"
+    let summary: String = "總結來說：「だけ」表示限制與唯一性，「だけでは／だけじゃ」表示「如果只有這樣是不夠的」。它們在歌詞中扮演著情感強化與語氣轉折的重要角色。"
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             
             // 標題
-            Text("📝「だけじゃ」的語感與用法補充")
+            Text("📝五、「だけじゃ」的語感與用法補充")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
             
-            // 使用修正後的子元件來顯示卡片
+            // 直接顯示卡片
             ForEach(dakeUsageData) { usage in
-                UsageCardView(usage: usage, selectedURL: $selectedURL)
+                UsageCardView(usage: usage)
             }
             
             // 總結區塊
@@ -44,17 +41,11 @@ struct DakeUsageSupplementView: View {
             .cornerRadius(4)
         }
         .padding()
-        // 關鍵：這行負責彈出網頁
-        .sheet(item: $selectedURL) { url in
-            SafariView(url: url)
-        }
     }
 }
 
-// 修改後的卡片元件：將 URL 跳轉邏輯整合進去
 struct UsageCardView: View {
     let usage: DakeUsage
-    @Binding var selectedURL: URL? // 透過 Binding 傳回給父元件顯示 Safari
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -83,19 +74,21 @@ struct UsageCardView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        // 處理歌曲名稱超連結
+                        // --- 核心修正：改用 SwiftUI Link 元件 ---
                         if let context = example.context {
-                            Button(action: {
-                                if let urlString = example.url, let url = URL(string: urlString) {
-                                    selectedURL = url
+                            if let urlString = example.url, let url = URL(string: urlString) {
+                                Link(destination: url) {
+                                    Text("[\(context)]")
+                                        .font(.caption2)
+                                        .foregroundColor(.blue)
+                                        .underline()
                                 }
-                            }) {
+                            } else {
+                                // 沒有連結則顯示橘色文字
                                 Text("[\(context)]")
                                     .font(.caption2)
-                                    .foregroundColor(example.url != nil ? .blue : .orange)
-                                    .underline(example.url != nil)
+                                    .foregroundColor(.orange)
                             }
-                            .disabled(example.url == nil)
                         }
                     }
                     .padding(.leading, 5)
@@ -108,17 +101,4 @@ struct UsageCardView: View {
         .cornerRadius(8)
         .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
     }
-}
-
-// 預覽與延伸
-struct DakeUsageSupplementView_Previews: PreviewProvider {
-    static var previews: some View {
-        ScrollView {
-            DakeUsageSupplementView()
-        }
-    }
-}
-
-extension URL: Identifiable {
-    public var id: String { self.absoluteString }
 }

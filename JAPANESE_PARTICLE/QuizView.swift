@@ -13,7 +13,7 @@ struct QuizView: View {
     var body: some View {
         VStack(alignment: .leading) {
             
-            Text("六、練習題")
+            Text("七、練習題")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
