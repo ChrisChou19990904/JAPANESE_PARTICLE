@@ -35,7 +35,7 @@ let dakeUsageData: [DakeUsage] = [
                 japanese: "待ってる**だけじゃ**、ダメな気がした",
                 chinese: "我覺得光是等待是不行的",
                 context: "出自《Life Goes On》",
-                url: "https://www.youtube.com/shorts/FcLLLaUlEic?feature=share"
+                url: "https://www.youtube.com/shorts/WNHKOcy_8o4?feature=share"
             ),
             ExampleSentence(
                 japanese: "力で勝つ**だけじゃ**、なにかが足りない",
