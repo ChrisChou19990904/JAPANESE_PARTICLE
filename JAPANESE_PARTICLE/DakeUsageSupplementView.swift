@@ -7,25 +7,26 @@
 import SwiftUI
 
 struct DakeUsageSupplementView: View {
+    // 狀態變數：控制 Safari 視窗
+    @State private var selectedURL: URL?
     
-    // 總結卡片
-    let summary: String = "總結來說：「だけ」表示限制與唯一性，「だけでは／だけじゃ」表示「如果只有這樣是不夠的」。它們在歌詞中扮演著情感強化與語氣轉折的重要角色。"
+    let summary: String = "總結來說：「だけ」表示限制與唯一性，「だけ則為／だけじゃ」表示「如果只有這樣是不夠的」。它們在歌詞中扮演著情感強化與語氣轉折的重要角色。"
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack(alignment: .leading, spacing: 20) {
             
-            // 模擬 HTML H2 標題
-            Text("📝「だけ」、「だけでは」、「だけじゃ」的語感與用法補充")
+            // 標題
+            Text("📝「だけじゃ」的語感與用法補充")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top)
             
-            // 核心說明與卡片呈現
+            // 使用修正後的子元件來顯示卡片
             ForEach(dakeUsageData) { usage in
-                UsageCardView(usage: usage)
+                UsageCardView(usage: usage, selectedURL: $selectedURL)
             }
             
-            // 總結區塊 (模擬 HTML 中的 .note/summary)
+            // 總結區塊
             VStack(alignment: .leading, spacing: 10) {
                 Text("總結")
                     .font(.headline)
@@ -33,60 +34,68 @@ struct DakeUsageSupplementView: View {
                     .font(.body)
             }
             .padding()
-            // 模擬 .intro-box 樣式
-            .background(Color(red: 255/255, green: 251/255, blue: 231/255)) // #fffbe7
+            .background(Color(red: 255/255, green: 251/255, blue: 231/255))
             .overlay(
                 Rectangle()
                     .frame(width: 4)
-                    .foregroundColor(Color(red: 241/255, green: 196/255, blue: 15/255)), // #f1c40f
+                    .foregroundColor(Color(red: 241/255, green: 196/255, blue: 15/255)),
                 alignment: .leading
             )
             .cornerRadius(4)
         }
         .padding()
+        // 關鍵：這行負責彈出網頁
+        .sheet(item: $selectedURL) { url in
+            SafariView(url: url)
+        }
     }
 }
 
-// 單個用法 (如「だけ」或「だけでは」) 的卡片視圖
+// 修改後的卡片元件：將 URL 跳轉邏輯整合進去
 struct UsageCardView: View {
     let usage: DakeUsage
+    @Binding var selectedURL: URL? // 透過 Binding 傳回給父元件顯示 Safari
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(usage.title)
                 .font(.title3)
                 .fontWeight(.heavy)
-                .foregroundColor(.black)
             
             Text(usage.description)
                 .font(.body)
-                .padding(.bottom, 5)
             
-            // 語法結構
             Text("結構: \(usage.structure)")
                 .font(.callout)
                 .foregroundColor(.blue)
             
-            // 例句
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text("範例:")
                     .font(.subheadline)
                     .fontWeight(.bold)
                 
                 ForEach(usage.examples) { example in
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(example.japanese)
                             .font(.body)
-                            .lineSpacing(4)
                         
                         Text(example.chinese)
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
+                        // 處理歌曲名稱超連結
                         if let context = example.context {
-                            Text("[\(context)]")
-                                .font(.caption2)
-                                .foregroundColor(.orange)
+                            Button(action: {
+                                if let urlString = example.url, let url = URL(string: urlString) {
+                                    selectedURL = url
+                                }
+                            }) {
+                                Text("[\(context)]")
+                                    .font(.caption2)
+                                    .foregroundColor(example.url != nil ? .blue : .orange)
+                                    .underline(example.url != nil)
+                            }
+                            .disabled(example.url == nil)
                         }
                     }
                     .padding(.leading, 5)
@@ -94,15 +103,22 @@ struct UsageCardView: View {
             }
         }
         .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
         .cornerRadius(8)
         .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
     }
 }
 
-// 預覽
+// 預覽與延伸
 struct DakeUsageSupplementView_Previews: PreviewProvider {
     static var previews: some View {
-        DakeUsageSupplementView()
+        ScrollView {
+            DakeUsageSupplementView()
+        }
     }
+}
+
+extension URL: Identifiable {
+    public var id: String { self.absoluteString }
 }
