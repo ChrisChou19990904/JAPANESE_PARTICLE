@@ -7,8 +7,8 @@
 import SwiftUI
 
 struct SentenceEndingParticlesView: View {
-    
     var body: some View {
+        // 將外層的 List 換成 VStack，這樣內容才能在 ScrollView 中正常展開
         VStack(alignment: .leading, spacing: 0) {
             
             // 模擬 HTML H2 標題
@@ -17,23 +17,26 @@ struct SentenceEndingParticlesView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal)
                 .padding(.top)
+                .padding(.bottom, 10)
             
             // 標題行 (Header)
             EndingParticleHeaderRow()
             
-            // 內容列表
-            List {
+            // 使用 ForEach 代替 List
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(sentenceEndingParticlesData) { particle in
-                    EndingParticleRow(particle: particle)
-                        .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                        .listRowSeparator(.hidden)
+                    VStack(spacing: 0) {
+                        EndingParticleRow(particle: particle)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
+                        
+                        Divider() // 手動加入分隔線
+                    }
                 }
             }
-            .listStyle(.plain)
         }
     }
 }
-
 // 終助詞表格的標題列 (Header)
 struct EndingParticleHeaderRow: View {
     var body: some View {

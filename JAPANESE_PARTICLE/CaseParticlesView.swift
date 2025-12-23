@@ -6,30 +6,33 @@
 //
 import SwiftUI
 
+// CaseParticlesView.swift
+
 struct CaseParticlesView: View {
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // 模擬 HTML H2 標題
             Text("一、格助詞（表示句子成分功能）")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
                 .padding(.top)
-            
-            // 標題行 (模擬表格的 thead)
+
             ParticleHeaderRow()
-            
-            // 內容列表
-            List {
+
+            // ❌ 不要使用 List
+            // ✅ 改用 VStack + ForEach
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(caseParticlesData) { particle in
-                    ParticleRow(particle: particle)
-                        .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                        .listRowSeparator(.hidden) // 隱藏 List 的分隔線
+                    VStack(spacing: 0) {
+                        ParticleRow(particle: particle)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
+                        Divider()
+                    }
                 }
             }
-            .listStyle(.plain) // 使用簡潔的列表樣式
         }
+        // 移除 .listStyle(.plain) 這種 List 專用的屬性
     }
 }
 

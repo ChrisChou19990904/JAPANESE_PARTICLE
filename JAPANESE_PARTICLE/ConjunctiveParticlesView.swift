@@ -24,19 +24,21 @@ struct ConjunctiveParticlesView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 10)
 
-            // 標題行 (模擬表格的 thead)
-            // 這裡可以選擇沿用 CaseParticlesView 中的 ParticleHeaderRow
+            // 標題行
             ConjunctiveParticleHeaderRow()
             
-            // 內容列表
-            List {
+            // ✅ 修改重點：將 List 替換為 VStack + ForEach
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(conjunctiveParticlesData) { particle in
-                    ConjunctiveParticleRow(particle: particle)
-                        .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                        .listRowSeparator(.hidden)
+                    VStack(spacing: 0) {
+                        ConjunctiveParticleRow(particle: particle)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 10)
+                        
+                        Divider() // 手動加入分隔線，模擬 List 的效果
+                    }
                 }
             }
-            .listStyle(.plain)
         }
     }
 }
